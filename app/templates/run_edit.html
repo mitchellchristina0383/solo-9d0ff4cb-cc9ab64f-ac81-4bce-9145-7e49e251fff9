@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ '补录' if is_new else '更正' }}运行记录 #{{ run_no }}</h2>
+<div class="box">
+<form method="post">
+  <p>主机启动 ID：<input name="boot_id" value="{{ form.boot_id or '' }}" required></p>
+  <p>主进程 PID：<input name="pid" type="number" min="1" value="{{ form.pid or '' }}" required></p>
+  <p>cgroup：<input name="cgroup" value="{{ form.cgroup or '' }}" required></p>
+  <p>开始时刻 (ms)：<input name="start_ms" type="number" min="0" value="{{ form.start_ms if form.start_ms is not none else '' }}" required></p>
+  <p>结束时刻 (ms)：<input name="end_ms" type="number" min="0" value="{{ form.end_ms if form.end_ms is not none else '' }}" required></p>
+  <button type="submit">保存并重核</button>
+  <a href="{{ url_for('main.runs') }}">返回</a>
+</form>
+</div>
+<p class="muted">保存后自动重核所有事件归属；若某事件的归属或触发范围因此变化，其原确认将被撤销。</p>
+{% endblock %}

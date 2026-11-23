@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    image: oom-duty:latest
+    ports:
+      - "8000:8000"
+    environment:
+      OOM_DB: /data/oom.db
+      SECRET_KEY: ${SECRET_KEY:-oom-duty-dev-key}
+    volumes:
+      - oom-data:/data
+    restart: unless-stopped
+
+volumes:
+  oom-data:

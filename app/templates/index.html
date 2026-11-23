@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>OOM 事件核对</h2>
+{% if not events %}
+<p class="muted">暂无数据，请先到「导入 CSV」导入运行记录与 OOM 摘要。</p>
+{% else %}
+<table>
+  <tr>
+    <th>事件号</th><th>启动 ID</th><th>被杀 PID</th><th>所在 cgroup</th>
+    <th>时刻 (ms)</th><th>触发范围</th><th>归属结论</th><th>确认状态</th><th>操作</th>
+  </tr>
+  {% for e in events %}
+  {% set conf = active.get(e.event_no) %}
+  {% set rev = revoked.get(e.event_no) %}
+  <tr>
+    <td>{{ e.event_no }}</td>
+    <td><code>{{ e.boot_id }}</code></td>
+    <td>{{ e.pid }}</td>
+    <td><code>{{ e.cgroup }}</code></td>
+    <td>{{ e.time_ms }}</td>
+    <td>{{ '触发组' if e.scope == 'memcg' else '整机' }} ({{ e.scope }})</td>
+    <td>
+      {% if e.status == 'unique' %}
+        运行号 <b>{{ e.attr_run_no }}</b>
+      {% else %}
+        <span class="tag tag-warn">待核</span>
+        <span class="muted">{% if e.match_count == 0 %}无匹配运行记录{% else %}{{ e.match_count }} 个候选运行号，无法唯一确定{% endif %}</span>
+      {% endif %}
+    </td>
+    <td>
+      {% if conf %}
+        <span class="tag tag-ok">已确认</span>
+        <div class="muted">运行号 {{ conf.run_no }} / {{ conf.scope }}<br>{{ conf.confirmed_at }}</div>
+      {% elif rev %}
+        <span class="tag tag-rev">确认已撤销</span>
+        <div class="muted">{{ rev.revoke_reason }}<br>{{ rev.revoked_at }}</div>
+      {% else %}
+        <span class="muted">未确认</span>
+      {% endif %}
+    </td>
+    <td>
+      {% if e.status == 'unique' and not conf %}
+        <form class="inline" method="post" action="{{ url_for('main.confirm') }}">
+          <input type="hidden" name="event_no" value="{{ e.event_no }}">
+          <input type="hidden" name="fingerprint" value="{{ e.fingerprint }}">
+          <button type="submit">确认派查</button>
+        </form>
+      {% endif %}
+      <a href="{{ url_for('main.edit_event', event_no=e.event_no) }}">更正</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<p class="muted">归属规则：启动 ID、PID、所在 cgroup 相同，且事件时刻落在运行时段 [start_ms, end_ms) 内；恰好一条匹配才给出运行号，否则标为待核。</p>
+{% endif %}
+{% endblock %}

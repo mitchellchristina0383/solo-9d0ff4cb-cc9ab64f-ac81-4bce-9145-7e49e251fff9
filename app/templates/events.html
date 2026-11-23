@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>内核 OOM 摘要</h2>
+<div class="box">
+  <form class="inline" method="get" onsubmit="location.href='/events/' + this.no.value + '/edit'; return false;">
+    按事件号更正/补录：<input name="no" type="number" min="1" required>
+    <button type="submit">打开</button>
+  </form>
+  <span class="muted">编号不存在时即为补录新事件。</span>
+</div>
+<table>
+  <tr><th>事件号</th><th>启动 ID</th><th>被杀 PID</th><th>所在 cgroup</th>
+      <th>时刻 (ms)</th><th>触发范围</th><th>操作</th></tr>
+  {% for e in events %}
+  <tr>
+    <td>{{ e.event_no }}</td>
+    <td><code>{{ e.boot_id }}</code></td>
+    <td>{{ e.pid }}</td>
+    <td><code>{{ e.cgroup }}</code></td>
+    <td>{{ e.time_ms }}</td>
+    <td>{{ '触发组' if e.scope == 'memcg' else '整机' }} ({{ e.scope }})</td>
+    <td><a href="{{ url_for('main.edit_event', event_no=e.event_no) }}">更正</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

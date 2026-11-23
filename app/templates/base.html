@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}OOM 归属核对{% endblock %}</title>
+<style>
+  body{font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f6f7f9;color:#222}
+  nav{background:#24303f;padding:10px 20px}
+  nav a{color:#cfd9e8;margin-right:18px;text-decoration:none}
+  nav a:hover{color:#fff}
+  main{max-width:1240px;margin:20px auto;padding:0 16px}
+  table{border-collapse:collapse;width:100%;background:#fff}
+  th,td{border:1px solid #e2e5ea;padding:6px 10px;font-size:14px;text-align:left;vertical-align:top}
+  th{background:#eef1f5;white-space:nowrap}
+  .flash-ok{background:#e6f6e6;border:1px solid #9ed69e;padding:8px 12px;margin:10px 0;border-radius:4px}
+  .flash-error{background:#fde8e8;border:1px solid #f0a8a8;padding:8px 12px;margin:10px 0;border-radius:4px}
+  .tag{padding:1px 8px;border-radius:10px;font-size:12px;white-space:nowrap}
+  .tag-ok{background:#dff0d8}.tag-warn{background:#fcf8e3}.tag-rev{background:#efe6f7}
+  code{background:#eef1f5;padding:1px 4px;border-radius:3px}
+  .muted{color:#777;font-size:12px}
+  form.inline{display:inline}
+  button{cursor:pointer;padding:3px 12px}
+  input,select{padding:4px 6px}
+  .box{background:#fff;border:1px solid #e2e5ea;border-radius:6px;padding:14px 18px;margin-bottom:16px}
+</style>
+</head>
+<body>
+<nav>
+  <a href="{{ url_for('main.index') }}">事件核对</a>
+  <a href="{{ url_for('main.import_csv') }}">导入 CSV</a>
+  <a href="{{ url_for('main.runs') }}">运行记录</a>
+  <a href="{{ url_for('main.events') }}">OOM 摘要</a>
+</nav>
+<main>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, m in messages %}<div class="flash-{{ cat }}">{{ m }}</div>{% endfor %}
+{% endwith %}
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

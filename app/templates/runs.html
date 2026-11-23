@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>运行记录</h2>
+<div class="box">
+  <form class="inline" method="get" onsubmit="location.href='/runs/' + this.no.value + '/edit'; return false;">
+    按运行号更正/补录：<input name="no" type="number" min="1" required>
+    <button type="submit">打开</button>
+  </form>
+  <span class="muted">编号不存在时即为补录新记录。</span>
+</div>
+<table>
+  <tr><th>运行号</th><th>启动 ID</th><th>主进程 PID</th><th>cgroup</th>
+      <th>开始 (ms)</th><th>结束 (ms)</th><th>操作</th></tr>
+  {% for r in runs %}
+  <tr>
+    <td>{{ r.run_no }}</td>
+    <td><code>{{ r.boot_id }}</code></td>
+    <td>{{ r.pid }}</td>
+    <td><code>{{ r.cgroup }}</code></td>
+    <td>{{ r.start_ms }}</td>
+    <td>{{ r.end_ms }}</td>
+    <td><a href="{{ url_for('main.edit_run', run_no=r.run_no) }}">更正</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

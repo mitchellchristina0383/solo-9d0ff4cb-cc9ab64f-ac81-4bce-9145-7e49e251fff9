@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>导入 CSV</h2>
+<div class="box">
+  <h3>运行记录</h3>
+  <p class="muted">表头：<code>run_no,boot_id,pid,cgroup,start_ms,end_ms</code>。
+  时刻为启动后的毫秒，时段左闭右开。run_no 已存在视为更正，否则为补录。</p>
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="kind" value="runs">
+    <input type="file" name="file" accept=".csv" required>
+    <button type="submit">导入运行记录</button>
+  </form>
+</div>
+<div class="box">
+  <h3>内核 OOM 摘要</h3>
+  <p class="muted">表头：<code>event_no,boot_id,pid,cgroup,time_ms,scope</code>。
+  scope 取值 <code>memcg</code>（触发组）或 <code>host</code>（整机）。event_no 已存在视为更正，否则为补录。</p>
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="kind" value="events">
+    <input type="file" name="file" accept=".csv" required>
+    <button type="submit">导入 OOM 摘要</button>
+  </form>
+</div>
+<p class="muted">导入为原子操作：任一行不合法则整文件不写入。导入后自动重核所有事件的归属；归属或触发范围发生变化的事件，其原确认会被撤销。</p>
+{% endblock %}

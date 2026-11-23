@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ '补录' if is_new else '更正' }}事件 #{{ event_no }}</h2>
+<div class="box">
+<form method="post">
+  <p>主机启动 ID：<input name="boot_id" value="{{ form.boot_id or '' }}" required></p>
+  <p>被杀 PID：<input name="pid" type="number" min="1" value="{{ form.pid or '' }}" required></p>
+  <p>所在 cgroup：<input name="cgroup" value="{{ form.cgroup or '' }}" required></p>
+  <p>时刻 (ms)：<input name="time_ms" type="number" min="0" value="{{ form.time_ms if form.time_ms is not none else '' }}" required></p>
+  <p>触发范围：
+    <select name="scope">
+      <option value="memcg" {{ 'selected' if form.scope == 'memcg' }}>memcg（触发组）</option>
+      <option value="host" {{ 'selected' if form.scope == 'host' }}>host（整机）</option>
+    </select>
+  </p>
+  <button type="submit">保存并重核</button>
+  <a href="{{ url_for('main.events') }}">返回</a>
+</form>
+</div>
+<p class="muted">保存后自动重核；若本事件的归属或触发范围因此变化，其原确认将被撤销，其他事件不受影响。</p>
+{% endblock %}
